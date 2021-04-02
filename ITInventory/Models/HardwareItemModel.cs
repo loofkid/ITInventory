@@ -1,0 +1,20 @@
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Linq;
+using System.Threading.Tasks;
+
+namespace ITInventory.Models
+{
+    public class HardwareItemModel : InventoryItemModel
+    {
+
+        [DisplayName("Serial Number")]
+        public string SerialNumber { get; set; }
+        public string Model { get; set; }
+        [DisplayName("Warranty Expiration Date")]
+        public DateTime? WarrantyExpiration { get; set; }
+        [DisplayName("Physical Location")]
+        public string PhysicalLocation { get; set; }
+    }
+}
