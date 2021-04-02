@@ -18,6 +18,6 @@ namespace ITInventory.Models
         public decimal Cost { get; set; }
         public string Notes { get; set; }
         public List<ReceiptModel> Receipts { get; set; }
-        public CustomerModel Customer { get; set; }
+        public UserModel Customer { get; set; }
     }
 }

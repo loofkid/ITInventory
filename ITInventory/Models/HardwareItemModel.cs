@@ -8,7 +8,6 @@ namespace ITInventory.Models
 {
     public class HardwareItemModel : InventoryItemModel
     {
-
         [DisplayName("Serial Number")]
         public string SerialNumber { get; set; }
         public string Model { get; set; }
@@ -16,5 +15,9 @@ namespace ITInventory.Models
         public DateTime? WarrantyExpiration { get; set; }
         [DisplayName("Physical Location")]
         public string PhysicalLocation { get; set; }
+        [DisplayName("Can Take Home")]
+        public bool CanTakeHome { get; set; }
+        [DisplayName("Requires Approval")]
+        public bool RequiresApproval { get; set; }
     }
 }
