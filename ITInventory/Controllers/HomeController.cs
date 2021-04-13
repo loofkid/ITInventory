@@ -1,4 +1,5 @@
-﻿using ITInventory.Models;
+﻿using ITInventory.Data;
+using ITInventory.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -13,17 +14,21 @@ namespace ITInventory.Controllers
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
+        private readonly ApplicationDbContext _context;
 
-        public HomeController(ILogger<HomeController> logger)
+        public HomeController(ILogger<HomeController> logger, ApplicationDbContext context)
         {
             _logger = logger;
+            _context = context;
         }
-
+        [AllowAnonymous]
         public IActionResult Index()
         {
-            return View();
+            if (_context.FirstRun.FirstOrDefault().IsFirstRun || !_context.FirstRun.FirstOrDefault().SetupCompleted)
+                return RedirectToAction("Index", "Home", new { area = "Setup" });
+            else
+                return View();
         }
-        [Authorize(Roles = "Administrator")]
         public IActionResult Privacy()
         {
             return View();
