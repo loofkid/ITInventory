@@ -1,0 +1,82 @@
+﻿@model ITInventory.Models.HardwareItem
+
+@{
+    ViewData["Title"] = "EditHardwareItem";
+}
+
+<h1>EditHardwareItem</h1>
+
+<h4>HardwareItem</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="EditHardwareItem">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="InventoryId" class="control-label"></label>
+                <input asp-for="InventoryId" class="form-control" />
+                <span asp-validation-for="InventoryId" class="text-danger"></span>
+            </div>
+            <hr />
+            <div class="form-group">
+                <label asp-for="Name" class="control-label"></label>
+                <input asp-for="Name" class="form-control" />
+                <span asp-validation-for="Name" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="SerialNumber" class="control-label"></label>
+                <input asp-for="SerialNumber" class="form-control" />
+                <span asp-validation-for="SerialNumber" class="text-danger"></span>
+            </div>
+            <hr />
+            <div class="form-group">
+                <label asp-for="DateOfPurchase" class="control-label"></label>
+                <input asp-for="DateOfPurchase" class="form-control" />
+                <span asp-validation-for="DateOfPurchase" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Cost" class="control-label"></label>
+                <input asp-for="Cost" class="form-control" />
+                <span asp-validation-for="Cost" class="text-danger"></span>
+            </div>
+            <hr />
+            <div class="form-group">
+                <label asp-for="WarrantyExpiration" class="control-label"></label>
+                <input asp-for="WarrantyExpiration" class="form-control" />
+                <span asp-validation-for="WarrantyExpiration" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="SupportExpiration" class="control-label"></label>
+                <input asp-for="SupportExpiration" class="form-control" />
+                <span asp-validation-for="SupportExpiration" class="text-danger"></span>
+            </div>
+            <div class="form-group form-check">
+                <label class="form-check-label">
+                    <input class="form-check-input" asp-for="RenewSupport" /> @Html.DisplayNameFor(model => model.RenewSupport)
+                </label>
+            </div>
+            <hr />
+            <div class="form-group form-check">
+                <label class="form-check-label">
+                    <input class="form-check-input" asp-for="CanTakeHome" /> @Html.DisplayNameFor(model => model.CanTakeHome)
+                </label>
+            </div>
+            <div class="form-group form-check">
+                <label class="form-check-label">
+                    <input class="form-check-input" asp-for="RequiresApproval" /> @Html.DisplayNameFor(model => model.RequiresApproval)
+                </label>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Save" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

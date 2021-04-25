@@ -1,5 +1,6 @@
 using ITInventory.Data;
 using ITInventory.Models;
+using ITInventory.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -10,6 +11,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -37,18 +39,14 @@ namespace ITInventory
                 .AddDefaultUI()
                 .AddDefaultTokenProviders();
             services.AddDatabaseDeveloperPageExceptionFilter();
-            services.AddAuthorization(options =>
-            {
-                options.FallbackPolicy = new AuthorizationPolicyBuilder()
-                    .RequireAuthenticatedUser()
-                    .Build();
-            });
+            // Set up authorization
+            services.AddSingleton<IConfigureOptions<AuthorizationOptions>, ConfigureAuthorizationOptions>();
             services.AddControllersWithViews();
             services.AddRazorPages();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ApplicationDbContext context)
         {
             if (env.IsDevelopment())
             {
@@ -69,16 +67,31 @@ namespace ITInventory
             app.UseAuthentication();
             app.UseAuthorization();
 
+            // Changes which routes are used by default depending on whether it's the first run of the application or not
             app.UseEndpoints(endpoints =>
             {
-                endpoints.MapControllerRoute(
-                    name: "areas",
-                    pattern: "{area:exists}/{controller=Home}/{action=Index}/{id?}"
+                if (context.FirstRun.FirstOrDefault().IsFirstRun || !context.FirstRun.FirstOrDefault().SetupCompleted)
+                {
+                    endpoints.MapControllerRoute(
+                        name: "default",
+                        pattern: "{area=Setup}/{controller=Home}/{action=Index}/{id?}"
                     );
-                endpoints.MapControllerRoute(
-                    name: "default",
-                    pattern: "{controller=Home}/{action=Index}/{id?}");
-                endpoints.MapRazorPages();
+                    endpoints.MapControllerRoute(
+                        name: "areas",
+                        pattern: "{area=Setup}/{controller=Home}/{action=Index}/{id?}"
+                    );
+                }
+                else
+                {
+                    endpoints.MapControllerRoute(
+                        name: "areas",
+                        pattern: "{area:exists}/{controller=Home}/{action=Index}/{id?}"
+                        );
+                    endpoints.MapControllerRoute(
+                        name: "default",
+                        pattern: "{controller=Home}/{action=Index}/{id?}");
+                    endpoints.MapRazorPages();
+                }
             });
         }
     }

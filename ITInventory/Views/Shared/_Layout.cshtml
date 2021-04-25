@@ -3,26 +3,36 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - ITInventory</title>
-    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <title>@ViewData["Title"] - IT Inventory</title>
+    <link rel="stylesheet" href="~/lib/bootstrap-colorpicker/dist/css/bootstrap-colorpicker.min.css" />
+    <link href="~/lib/datatables.net-bs4/css/dataTables.bootstrap4.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="~/lib/dropzone/dist/min/dropzone.min.css" />
+    <link rel="stylesheet" href="~/lib/dualinventive/bootstrap-combobox/css/bootstrap-combobox.css" />
+    <link rel="stylesheet" href="~/css/bootstrap.custom.css" />
     <link rel="stylesheet" href="~/css/site.css" />
 </head>
 <body>
     <header>
         <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
             <div class="container">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">ITInventory</a>
+                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">@await  Component.InvokeAsync("Logo")</a>
                 <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".navbar-collapse" aria-controls="navbarSupportedContent"
                         aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
+                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between" asp-authpolicy="RequireSuperAdminRole,RequireAdministratorRole,RequireTechnicianRole,RequireCustomerRole">
                     <ul class="navbar-nav flex-grow-1">
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link text-dark dropdown-toggle" href="#" asp-authpolicy="RequireSuperAdminRole,RequireAdministratorRole,RequireTechnicianRole" id="inventoryDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Inventory</a>
+                            <div class="dropdown-menu" aria-labelledby="inventoryDropdown">
+                                <a class="dropdown-item" asp-area="Inventory" asp-controller="Inventory" asp-action="Index">Inventory List</a>
+                                <h6 class="dropdown-header">Manage Inventory</h6>
+                                <a class="dropdown-item" asp-area="Inventory" asp-controller="Inventory" asp-action="AddHardwareItem">Add Hardware Item</a>
+                                <a class="dropdown-item" asp-area="Inventory" asp-controller="Inventory" asp-action="EditHardwareITem">Edit Hardware Item</a>
+                            </div>
                         </li>
                     </ul>
                     <partial name="_LoginPartial" />
@@ -38,12 +48,22 @@
 
     <footer class="border-top footer text-muted">
         <div class="container">
-            &copy; 2021 - ITInventory - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-        </div>
+                &copy; 2021 - ITInventory - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+         </div>
     </footer>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/lib/bootstrap-colorpicker/dist/js/bootstrap-colorpicker.min.js"></script>
+    <script src="~/lib/datatables.net/js/jquery.dataTables.min.js"></script>
+    <script src="~/lib/datatables.net-bs4/js/dataTables.bootstrap4.min.js"></script>
+    <script src="~/lib/dropzone/dist/min/dropzone.min.js"></script>
+    <script src="~/lib/dualinventive/bootstrap-combobox/js/bootstrap-combobox.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
     @await RenderSectionAsync("Scripts", required: false)
+    <script>
+        (function () {
+            document.querySelector('body').dispatchEvent(new Event('scriptsLoaded'));
+        })();
+    </script>
 </body>
 </html>

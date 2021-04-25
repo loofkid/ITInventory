@@ -1,0 +1,38 @@
+{
+  "version": "1.0",
+  "defaultProvider": "unpkg",
+  "libraries": [
+    {
+      "library": "bootstrap@4.6.0",
+      "destination": "wwwroot/lib/bootstrap/"
+    },
+    {
+      "library": "cleave.js@1.6.0",
+      "destination": "wwwroot/lib/cleave.js/"
+    },
+    {
+      "library": "bootstrap-colorpicker@3.2.0",
+      "destination": "wwwroot/lib/bootstrap-colorpicker/"
+    },
+    {
+      "library": "datatables.net@1.10.24",
+      "destination": "wwwroot/lib/datatables.net/"
+    },
+    {
+      "library": "datatables.net-bs4@1.10.24",
+      "destination": "wwwroot/lib/datatables.net-bs4/"
+    },
+    {
+      "library": "dropzone@5.9.2",
+      "destination": "wwwroot/lib/dropzone/"
+    },
+    {
+      "library": "bs-dropzone@5.7.4",
+      "destination": "wwwroot/lib/bs-dropzone/"
+    },
+    {
+      "library": "@dualinventive/bootstrap-combobox@1.2.3",
+      "destination": "wwwroot/lib/dualinventive/bootstrap-combobox/"
+    }
+  ]
+}

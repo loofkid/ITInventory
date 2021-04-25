@@ -1,0 +1,8 @@
+﻿@if (ViewBag.HasLogo)
+{
+    <img src="@Url.Action("GetImage", "Home",  new { area = "", imageID = ViewBag.ImageID })" alt="IT Inventory" />
+}
+else
+{
+    <span>IT Inventory</span>
+}

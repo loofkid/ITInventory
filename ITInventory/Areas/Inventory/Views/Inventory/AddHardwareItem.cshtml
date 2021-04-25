@@ -1,0 +1,194 @@
+﻿@model ITInventory.Models.HardwareItem
+
+@{
+    ViewData["Title"] = "Add a Hardware Item to inventory";
+}
+
+<h4>Hardware Item</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-area="Inventory" asp-controller="Inventory" asp-action="AddHardwareItem" id="hardwareItem-form" enctype="multipart/form-data" >
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="InventoryId" class="control-label"></label>
+                <input asp-for="InventoryId" class="form-control" />
+                <span asp-validation-for="InventoryId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Category.Name" class="control-label">@Html.DisplayNameFor(m => m.Category)</label>
+                <combobox asp-for="Category.Name" asp-items="@Model.Categories.Select(c => new SelectListItem(c.Name, c.Name))"  class="form-control"></combobox>
+                <span asp-validation-for="Category.Name" class="text-danger"></span>
+            </div>
+            <hr />
+            <div class="form-group">
+                <label asp-for="Name" class="control-label"></label>
+                <input asp-for="Name" class="form-control" />
+                <span asp-validation-for="Name" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Manufacturer.Name" class="control-label">@Html.DisplayNameFor(m => m.Manufacturer)</label>
+                <combobox asp-for="Manufacturer.Name" asp-items="@Model.Manufacturers.Select(m => new SelectListItem(m.Name, m.Name))" class="form-control"></combobox>
+                <span asp-validation-for="Manufacturer.Name" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Model.Name" class="control-label">@Html.DisplayNameFor(m => m.Model)</label>
+                <combobox asp-for="Model.Name" asp-items="@Model.Models.Select(m => new SelectListItem(m.Name, m.Name))" class="form-control"></combobox>
+                <span asp-validation-for="Model.Name" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="SerialNumber" class="control-label"></label>
+                <input asp-for="SerialNumber" class="form-control" />
+                <span asp-validation-for="SerialNumber" class="text-danger"></span>
+            </div>
+            <hr />
+            <div class="form-group">
+                <label asp-for="DateOfPurchase" class="control-label"></label>
+                <input asp-for="DateOfPurchase" class="form-control" />
+                <span asp-validation-for="DateOfPurchase" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Cost" class="control-label"></label>
+                <input asp-for="Cost" class="form-control" />
+                <span asp-validation-for="Cost" class="text-danger"></span>
+            </div>
+            <hr />
+            <div class="form-group">
+                <label asp-for="WarrantyExpiration" class="control-label"></label>
+                <input asp-for="WarrantyExpiration" class="form-control" />
+                <span asp-validation-for="WarrantyExpiration" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="SupportExpiration" class="control-label"></label>
+                <input asp-for="SupportExpiration" class="form-control" />
+                <span asp-validation-for="SupportExpiration" class="text-danger"></span>
+            </div>
+            <div class="form-group form-check">
+                <label class="form-check-label">
+                    <input class="form-check-input" asp-for="RenewSupport" /> @Html.DisplayNameFor(model => model.RenewSupport)
+                </label>
+            </div>
+            <hr />
+            <div class="form-group form-check-inline">
+                <label class="form-check-label">
+                    <input class="form-check-input" asp-for="CanTakeHome" /> @Html.DisplayNameFor(model => model.CanTakeHome)
+                </label>
+            </div>
+            <div class="form-group form-check-inline">
+                <label class="form-check-label">
+                    <input class="form-check-input" asp-for="RequiresApproval" /> @Html.DisplayNameFor(model => model.RequiresApproval)
+                </label>
+            </div>
+            <div class="form-group">
+                <label asp-for="PhysicalLocation.Name" class="control-label">@Html.DisplayNameFor(m => m.PhysicalLocation)</label>
+                <combobox asp-for="PhysicalLocation.Name" asp-items="@Model.PhysicalLocations.Select(p => new SelectListItem( p.Name, p.Name))" class="form-control"></combobox>
+                <span asp-validation-for="PhysicalLocation.Name" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Notes" class="control-label"></label>
+                <textarea asp-for="Notes" class="form-control"></textarea>
+                <span asp-validation-for="Notes" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="ReceiptFiles" class="control-label"></label>
+                <input asp-for="ReceiptFiles" type="file" multiple class="form-control-file invisible" />
+                <div class="card" id="receipt-upload">
+                    <div class="card-body btn align-middle" id="receipt-body">
+                        <p class="text-center">Drop files here to upload.</p>
+                    </div>
+                    <ul class="list-group list-group-flush receipt-preview-list">
+                    </ul>
+                </div>
+                <span asp-validation-for="ReceiptFiles" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Create" class="btn btn-primary" id="hardwareItem-submitButton" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    <script>
+        var fileList = new DataTransfer();
+        $(function () {
+            $("#receipt-upload").on("dragover", function (e) {
+                e.preventDefault();
+                $(this).addClass("border-primary");
+            });
+            $("#receipt-upload").on("dragleave", function () {
+                $(this).removeClass("border-primary");
+            });
+            $("#receipt-upload").on("drop", function (e) {
+                e.preventDefault();
+                var file = e.originalEvent.dataTransfer.files[0];
+                $(this).removeClass("border-primary");
+                fileList.items.add(file);
+                $("#ReceiptFiles")[0].files = fileList.files;
+                addPreview($(this).find(".receipt-preview-list"), file, fileList.files.length-1);
+            })
+            $("#ReceiptFiles").change(function () {
+                for (let file of this.files) {
+                    fileList.items.add(file);
+                    addPreview($("#receipt-upload").find(".receipt-preview-list"), file, fileList.files.length-1);
+                }
+            });
+            $("#receipt-body").click(function () {
+                $("#ReceiptFiles").click();
+            });
+        });
+        function addPreview(element, file, index) {
+            element.append(function () {
+                return '<li class="list-group-item d-flex justify-content-between align-items-center" index=' + index + '><span>' + file.name + '</span><button type="button" class="close" index=' + index + ' aria-label="remove"><span aria-hidden="true">&times;</span></button></li>';
+            });
+            element.find("button[aria-label='remove']").click(function () {
+                var elemIndex = $(this).attr("index");
+                fileList.items.remove(elemIndex);
+                $("#ReceiptFiles")[0].files = fileList.files;
+                $(this).parent("li").detach();
+            });
+        }
+        @*Dropzone.autoDiscover = false;
+        var receiptDropzone;
+        $(function () {
+            receiptDropzone = new Dropzone($("#receipt-upload")[0], {
+                autoProcessQueue: false,
+                uploadMultiple: true,
+                parallelUploads: 100,
+                url: "@Url.Action("AddReceipts")",
+                hiddenInputContainer: "#hardwareItem-form",
+                paramName: "receipts",
+                createImageThumbnails: false,
+                forceFallback: true,
+                previewTemplate: '<li class="list-group-item d-flex justify-content-between align-items-center"><span data-dz-name></span><button type="button" class="close" aria-label="remove" data-dz-remove><span aria-hidden="true">&times;</span></button></li>',
+
+                //init: function () {
+                //    this.on("sendingmultiple", function () {
+                //        receiptDropzone.formData.append($("#InventoryId").attr("name"), $("#InventoryId").val());
+                //    });
+                //}
+            });
+            var receiptDropzone = $("#receipt-upload").dropzone({
+                url: "@Url.Action("AddReceipts")",
+                createImageThumbnails: false,
+                previewTemplate: '<li class="list-group-item d-flex justify-content-between align-items-center"><span data-dz-name></span><button type="button" class="close" aria-label="remove" data-dz-remove><span aria-hidden="true">&times;</span></button></li>'
+            });
+            receiptDropzone.on("sending", function (data, xhr, formData) {
+                formData.append($("#InventoryId").attr("name"), $("#InventoryId").val());
+            });
+            $("#hardwareItem-form").one("submit", function (e) {
+                e.preventDefault();
+                e.stopPropagation();
+                if (this.valid()) {
+                    receiptDropzone.processQueue();
+                    $("#hardwareItem-form").submit();
+                }
+            });
+        });*@
+    </script>
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

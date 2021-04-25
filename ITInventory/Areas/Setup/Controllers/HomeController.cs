@@ -30,9 +30,16 @@ namespace ITInventory.Areas.Setup.Controllers
                 if (_context.FirstRun.FirstOrDefault().SetupStep == 0)
                     return View();
                 else if (_context.FirstRun.FirstOrDefault().SetupStep == 1)
-                    return RedirectToAction("RegisterFirstRun", "Account", new { area = "Identity" });
+                    return RedirectToAction("RegisterFirstRun", "Account", new { area = "Setup" });
                 else if (_context.FirstRun.FirstOrDefault().SetupStep == 2)
-                    return RedirectToAction("Index", "Home", new { area = "SiteSettings" });
+
+                    return RedirectToAction("Setup", "Home", new { area = "SiteSettings" });
+                else if (_context.FirstRun.FirstOrDefault().SetupStep == 3)
+                {
+                    _context.FirstRun.FirstOrDefault(e => e.ID == "firstrun").SetupCompleted = true;
+                    _context.SaveChanges();
+                    return RedirectToAction("Index", "Home", new { area = "" });
+                }
                 else
                     return RedirectToAction("Index", "Home", new { area = "" });
             }

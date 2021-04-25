@@ -48,13 +48,47 @@ namespace ITInventory.Migrations
                         });
                 });
 
-            modelBuilder.Entity("ITInventory.Models.CheckOut", b =>
+            modelBuilder.Entity("ITInventory.Areas.SiteSettings.Models.SiteSettingsModel", b =>
                 {
-                    b.Property<int>("InventoryID")
+                    b.Property<int>("SiteID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("SiteColorPrimary")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("SiteColorSecondary")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("SiteLogoImageID")
                         .HasColumnType("int");
 
+                    b.HasKey("SiteID");
+
+                    b.HasIndex("SiteLogoImageID");
+
+                    b.ToTable("SiteSettings", "Settings");
+
+                    b.HasData(
+                        new
+                        {
+                            SiteID = -1,
+                            SiteColorPrimary = "#0275d8",
+                            SiteColorSecondary = "#6C757D"
+                        });
+                });
+
+            modelBuilder.Entity("ITInventory.Models.CheckOut", b =>
+                {
                     b.Property<DateTime>("CheckOutTime")
                         .HasColumnType("datetime2");
+
+                    b.Property<string>("InventoryId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("CustomerId")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<bool>("Approved")
                         .HasColumnType("bit");
@@ -62,11 +96,8 @@ namespace ITInventory.Migrations
                     b.Property<string>("ApproverId")
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<string>("CustomerId")
+                    b.Property<string>("HardwareItemInventoryId")
                         .HasColumnType("nvarchar(450)");
-
-                    b.Property<int?>("ItemInventoryId")
-                        .HasColumnType("int");
 
                     b.Property<DateTime?>("ReturnTime")
                         .HasColumnType("datetime2");
@@ -74,28 +105,52 @@ namespace ITInventory.Migrations
                     b.Property<string>("TechnicianId")
                         .HasColumnType("nvarchar(450)");
 
-                    b.HasKey("InventoryID", "CheckOutTime");
+                    b.HasKey("CheckOutTime", "InventoryId", "CustomerId");
 
                     b.HasIndex("ApproverId");
 
                     b.HasIndex("CustomerId");
 
-                    b.HasIndex("ItemInventoryId");
+                    b.HasIndex("HardwareItemInventoryId");
+
+                    b.HasIndex("InventoryId");
 
                     b.HasIndex("TechnicianId");
 
                     b.ToTable("CheckOutRecords");
                 });
 
-            modelBuilder.Entity("ITInventory.Models.InventoryItem", b =>
+            modelBuilder.Entity("ITInventory.Models.Image", b =>
                 {
-                    b.Property<int>("InventoryId")
+                    b.Property<int>("ImageID")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<string>("Category")
+                    b.Property<string>("DataType")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<byte[]>("ImageData")
+                        .HasColumnType("varbinary(max)");
+
+                    b.Property<string>("ImageName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("ImageID");
+
+                    b.ToTable("Images", "Content");
+                });
+
+            modelBuilder.Entity("ITInventory.Models.InventoryItem", b =>
+                {
+                    b.Property<string>("InventoryId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("CategoryName")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("CategoryUserId")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<decimal>("Cost")
                         .HasColumnType("money");
@@ -103,11 +158,18 @@ namespace ITInventory.Migrations
                     b.Property<string>("CustomerId")
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<DateTime>("DateOfPurchase")
+                    b.Property<DateTime?>("DateOfPurchase")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("Manufacturer")
+                    b.Property<string>("Discriminator")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ManufacturerName")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("ManufacturerUserId")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
@@ -125,7 +187,13 @@ namespace ITInventory.Migrations
 
                     b.HasIndex("CustomerId");
 
+                    b.HasIndex("CategoryName", "CategoryUserId");
+
+                    b.HasIndex("ManufacturerName", "ManufacturerUserId");
+
                     b.ToTable("InventoryItems");
+
+                    b.HasDiscriminator<string>("Discriminator").HasValue("InventoryItem");
                 });
 
             modelBuilder.Entity("ITInventory.Models.Receipt", b =>
@@ -135,18 +203,19 @@ namespace ITInventory.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<byte[]>("FileData")
-                        .HasColumnType("varbinary(max)");
+                    b.Property<DateTime>("DateAdded")
+                        .HasColumnType("datetime2");
 
-                    b.Property<int?>("ItemInventoryId")
-                        .HasColumnType("int");
+                    b.Property<byte[]>("FileData")
+                        .HasColumnType("varbinary(MAX)");
+
+                    b.Property<string>("FileType")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("DocumentID");
-
-                    b.HasIndex("ItemInventoryId");
 
                     b.ToTable("Receipts");
                 });
@@ -163,8 +232,14 @@ namespace ITInventory.Migrations
                         .IsConcurrencyToken()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("DisplayName")
+                    b.Property<string>("Discriminator")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("DisplayName")
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("nvarchar(max)")
+                        .HasComputedColumnSql("[FirstName] + ' ' + [LastName]");
 
                     b.Property<string>("Email")
                         .HasMaxLength(256)
@@ -232,6 +307,54 @@ namespace ITInventory.Migrations
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
 
                     b.ToTable("Users", "Identity");
+
+                    b.HasDiscriminator<string>("Discriminator").HasValue("User");
+                });
+
+            modelBuilder.Entity("ITInventory.Models.WeightedComboBoxItem", b =>
+                {
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("UserId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("Discriminator")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("LastUsed")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("GETDATE()");
+
+                    b.Property<int>("Uses")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasDefaultValue(1);
+
+                    b.HasKey("Name", "UserId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("ComboBoxItems", "Metadata");
+
+                    b.HasDiscriminator<string>("Discriminator").HasValue("WeightedComboBoxItem");
+                });
+
+            modelBuilder.Entity("InventoryItemReceipt", b =>
+                {
+                    b.Property<string>("InventoryItemsInventoryId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<int>("ReceiptsDocumentID")
+                        .HasColumnType("int");
+
+                    b.HasKey("InventoryItemsInventoryId", "ReceiptsDocumentID");
+
+                    b.HasIndex("ReceiptsDocumentID");
+
+                    b.ToTable("InventoryItemReceipt");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -372,11 +495,17 @@ namespace ITInventory.Migrations
                     b.Property<bool>("CanTakeHome")
                         .HasColumnType("bit");
 
-                    b.Property<string>("Model")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<string>("ModelName")
+                        .HasColumnType("nvarchar(450)");
 
-                    b.Property<string>("PhysicalLocation")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<string>("ModelUserId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("PhysicalLocationName")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("PhysicalLocationUserId")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<bool>("RequiresApproval")
                         .HasColumnType("bit");
@@ -387,7 +516,11 @@ namespace ITInventory.Migrations
                     b.Property<DateTime?>("WarrantyExpiration")
                         .HasColumnType("datetime2");
 
-                    b.ToTable("HardwareItems");
+                    b.HasIndex("ModelName", "ModelUserId");
+
+                    b.HasIndex("PhysicalLocationName", "PhysicalLocationUserId");
+
+                    b.HasDiscriminator().HasValue("HardwareItem");
                 });
 
             modelBuilder.Entity("ITInventory.Models.SoftwareItem", b =>
@@ -409,7 +542,7 @@ namespace ITInventory.Migrations
                     b.Property<decimal?>("SubscriptionCost")
                         .HasColumnType("money");
 
-                    b.ToTable("SoftwareItems");
+                    b.HasDiscriminator().HasValue("SoftwareItem");
                 });
 
             modelBuilder.Entity("ITInventory.Models.Customer", b =>
@@ -424,7 +557,35 @@ namespace ITInventory.Migrations
 
                     b.HasIndex("ManagerId");
 
-                    b.ToTable("Customers", "Identity");
+                    b.HasDiscriminator().HasValue("Customer");
+                });
+
+            modelBuilder.Entity("ITInventory.Models.Category", b =>
+                {
+                    b.HasBaseType("ITInventory.Models.WeightedComboBoxItem");
+
+                    b.HasDiscriminator().HasValue("Category");
+                });
+
+            modelBuilder.Entity("ITInventory.Models.ItemModel", b =>
+                {
+                    b.HasBaseType("ITInventory.Models.WeightedComboBoxItem");
+
+                    b.HasDiscriminator().HasValue("ItemModel");
+                });
+
+            modelBuilder.Entity("ITInventory.Models.Manufacturer", b =>
+                {
+                    b.HasBaseType("ITInventory.Models.WeightedComboBoxItem");
+
+                    b.HasDiscriminator().HasValue("Manufacturer");
+                });
+
+            modelBuilder.Entity("ITInventory.Models.PhysicalLocation", b =>
+                {
+                    b.HasBaseType("ITInventory.Models.WeightedComboBoxItem");
+
+                    b.HasDiscriminator().HasValue("PhysicalLocation");
                 });
 
             modelBuilder.Entity("ITInventory.Models.CellPhoneItem", b =>
@@ -434,14 +595,23 @@ namespace ITInventory.Migrations
                     b.Property<string>("IMEINumber")
                         .HasColumnType("nvarchar(max)");
 
-                    b.ToTable("CellPhoneItems");
+                    b.HasDiscriminator().HasValue("CellPhoneItem");
                 });
 
             modelBuilder.Entity("ITInventory.Models.Technician", b =>
                 {
                     b.HasBaseType("ITInventory.Models.Customer");
 
-                    b.ToTable("Technicians", "Identity");
+                    b.HasDiscriminator().HasValue("Technician");
+                });
+
+            modelBuilder.Entity("ITInventory.Areas.SiteSettings.Models.SiteSettingsModel", b =>
+                {
+                    b.HasOne("ITInventory.Models.Image", "SiteLogo")
+                        .WithMany()
+                        .HasForeignKey("SiteLogoImageID");
+
+                    b.Navigation("SiteLogo");
                 });
 
             modelBuilder.Entity("ITInventory.Models.CheckOut", b =>
@@ -452,11 +622,19 @@ namespace ITInventory.Migrations
 
                     b.HasOne("ITInventory.Models.Customer", "Customer")
                         .WithMany()
-                        .HasForeignKey("CustomerId");
+                        .HasForeignKey("CustomerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ITInventory.Models.HardwareItem", null)
+                        .WithMany("CheckOuts")
+                        .HasForeignKey("HardwareItemInventoryId");
 
                     b.HasOne("ITInventory.Models.HardwareItem", "Item")
-                        .WithMany("CheckOuts")
-                        .HasForeignKey("ItemInventoryId");
+                        .WithMany()
+                        .HasForeignKey("InventoryId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("ITInventory.Models.Technician", "Technician")
                         .WithMany()
@@ -476,15 +654,44 @@ namespace ITInventory.Migrations
                     b.HasOne("ITInventory.Models.Customer", null)
                         .WithMany("Items")
                         .HasForeignKey("CustomerId");
+
+                    b.HasOne("ITInventory.Models.Category", "Category")
+                        .WithMany()
+                        .HasForeignKey("CategoryName", "CategoryUserId");
+
+                    b.HasOne("ITInventory.Models.Manufacturer", "Manufacturer")
+                        .WithMany()
+                        .HasForeignKey("ManufacturerName", "ManufacturerUserId");
+
+                    b.Navigation("Category");
+
+                    b.Navigation("Manufacturer");
                 });
 
-            modelBuilder.Entity("ITInventory.Models.Receipt", b =>
+            modelBuilder.Entity("ITInventory.Models.WeightedComboBoxItem", b =>
                 {
-                    b.HasOne("ITInventory.Models.InventoryItem", "Item")
-                        .WithMany("Receipts")
-                        .HasForeignKey("ItemInventoryId");
+                    b.HasOne("ITInventory.Models.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
-                    b.Navigation("Item");
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("InventoryItemReceipt", b =>
+                {
+                    b.HasOne("ITInventory.Models.InventoryItem", null)
+                        .WithMany()
+                        .HasForeignKey("InventoryItemsInventoryId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ITInventory.Models.Receipt", null)
+                        .WithMany()
+                        .HasForeignKey("ReceiptsDocumentID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -540,58 +747,26 @@ namespace ITInventory.Migrations
 
             modelBuilder.Entity("ITInventory.Models.HardwareItem", b =>
                 {
-                    b.HasOne("ITInventory.Models.InventoryItem", null)
-                        .WithOne()
-                        .HasForeignKey("ITInventory.Models.HardwareItem", "InventoryId")
-                        .OnDelete(DeleteBehavior.ClientCascade)
-                        .IsRequired();
-                });
+                    b.HasOne("ITInventory.Models.ItemModel", "Model")
+                        .WithMany()
+                        .HasForeignKey("ModelName", "ModelUserId");
 
-            modelBuilder.Entity("ITInventory.Models.SoftwareItem", b =>
-                {
-                    b.HasOne("ITInventory.Models.InventoryItem", null)
-                        .WithOne()
-                        .HasForeignKey("ITInventory.Models.SoftwareItem", "InventoryId")
-                        .OnDelete(DeleteBehavior.ClientCascade)
-                        .IsRequired();
+                    b.HasOne("ITInventory.Models.PhysicalLocation", "PhysicalLocation")
+                        .WithMany()
+                        .HasForeignKey("PhysicalLocationName", "PhysicalLocationUserId");
+
+                    b.Navigation("Model");
+
+                    b.Navigation("PhysicalLocation");
                 });
 
             modelBuilder.Entity("ITInventory.Models.Customer", b =>
                 {
-                    b.HasOne("ITInventory.Models.User", null)
-                        .WithOne()
-                        .HasForeignKey("ITInventory.Models.Customer", "Id")
-                        .OnDelete(DeleteBehavior.ClientCascade)
-                        .IsRequired();
-
                     b.HasOne("ITInventory.Models.Customer", "Manager")
                         .WithMany()
                         .HasForeignKey("ManagerId");
 
                     b.Navigation("Manager");
-                });
-
-            modelBuilder.Entity("ITInventory.Models.CellPhoneItem", b =>
-                {
-                    b.HasOne("ITInventory.Models.HardwareItem", null)
-                        .WithOne()
-                        .HasForeignKey("ITInventory.Models.CellPhoneItem", "InventoryId")
-                        .OnDelete(DeleteBehavior.ClientCascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("ITInventory.Models.Technician", b =>
-                {
-                    b.HasOne("ITInventory.Models.Customer", null)
-                        .WithOne()
-                        .HasForeignKey("ITInventory.Models.Technician", "Id")
-                        .OnDelete(DeleteBehavior.ClientCascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("ITInventory.Models.InventoryItem", b =>
-                {
-                    b.Navigation("Receipts");
                 });
 
             modelBuilder.Entity("ITInventory.Models.HardwareItem", b =>

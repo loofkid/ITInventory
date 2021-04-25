@@ -56,7 +56,10 @@ namespace ITInventory.Areas.Identity.Pages.Account.Manage
 
             Input = new InputModel
             {
-                PhoneNumber = phoneNumber
+                PhoneNumber = phoneNumber,
+                FirstName = firstName,
+                LastName = lastName,
+                JobTitle = jobTitle
             };
         }
 
@@ -95,6 +98,30 @@ namespace ITInventory.Areas.Identity.Pages.Account.Manage
                     StatusMessage = "Unexpected error when trying to set phone number.";
                     return RedirectToPage();
                 }
+            }
+
+            bool hasUpdates = false;
+            if (Input.FirstName != user.FirstName)
+            {
+                hasUpdates = true;
+                user.FirstName = Input.FirstName;
+            }
+
+            if (Input.LastName != user.LastName)
+            {
+                hasUpdates = true;
+                user.LastName = Input.LastName;
+            }
+
+            if (Input.JobTitle != user.JobTitle)
+            {
+                hasUpdates = true;
+                user.JobTitle = Input.JobTitle;
+            }
+
+            if (hasUpdates)
+            {
+                await _userManager.UpdateAsync(user);
             }
 
             await _signInManager.RefreshSignInAsync(user);

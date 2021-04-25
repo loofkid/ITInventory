@@ -1,8 +1,117 @@
-﻿@{
-    ViewData["Title"] = "Home Page";
+﻿@model Tuple<IEnumerable<IGrouping<string, HardwareItem>>, IEnumerable<SoftwareItem>>
+@{
+    ViewData["Title"] = "Home";
 }
 
 <div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+    <h3>Your Equipment</h3>
+</div>
+<div>
+    <h4>Hardware</h4>
+    @*@if (Model.Item1.AsQueryable().Any())
+    {
+        <form asp-action="Index" method="get">
+            <div class="input-group">
+                <label class="control-label" for="HardwareSearch">Search: </label><input type="text" name="HardwareSearch" value="@ViewData["CurrentHardwareSearch"]" class="form-control" />
+            </div>
+        </form>
+        <table class="table table-hover">
+            <thead class="thead-dark">
+                <tr>
+                    <th>
+                        @Html.DisplayNameFor(h => h.Item1.FirstOrDefault().FirstOrDefault().InventoryId)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(h => h.Item1.FirstOrDefault().FirstOrDefault().Name)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(h => h.Item1.FirstOrDefault().FirstOrDefault().Model)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(h => h.Item1.FirstOrDefault().FirstOrDefault().Manufacturer)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(h => h.Item1.FirstOrDefault().FirstOrDefault().SerialNumber)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(h => h.Item1.FirstOrDefault().FirstOrDefault().CanTakeHome)
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var group in Model.Item1)
+                {
+                    <tr class="table-primary">
+                        <td colspan="6"><span class="h5">@group.Key</span></td>
+                    </tr>
+                    @foreach (var hardwareItem in group)
+                    {
+                        <tr>
+                            <td>
+                                @Html.DisplayFor(modelItem => hardwareItem.InventoryId)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => hardwareItem.Name)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => hardwareItem.Model)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => hardwareItem.Manufacturer)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => hardwareItem.SerialNumber)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => hardwareItem.CanTakeHome)
+                            </td>
+                        </tr>
+
+                    }
+                }
+            </tbody>
+        </table>
+    }
+    else
+    {
+        <p class="text-body">You have not checked out any hardware.</p>
+    }
+    <h4>Software</h4>
+    @if (Model.Item2.AsQueryable().Any())
+    {
+        <form asp-action="Index" method="get">
+            <div class="input-group">
+                <label class="control-label" for="SoftwareSearch">Search: </label><input type="text" name="HardwareSearch" value="@ViewData["CurrentSoftwareSearch"]" class="form-control" />
+            </div>
+        </form>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>
+                        @Html.DisplayNameFor(h => h.Item2.FirstOrDefault().Name)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(h => h.Item2.FirstOrDefault().Manufacturer)
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var softwareItem in Model.Item2)
+                {
+                    <tr>
+                        <td>
+                            @Html.DisplayFor(modelItem => softwareItem.Name)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => softwareItem.Manufacturer)
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+    else
+    {
+        <p class="text-body">You do not have any software checked out.</p>
+    }*@
 </div>

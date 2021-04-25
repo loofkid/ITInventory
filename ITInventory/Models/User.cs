@@ -15,7 +15,7 @@ namespace ITInventory.Models
         [DisplayName("Last Name")]
         public string LastName { get; set; }
         [DisplayName("Display Name")]
-        public string DisplayName { get; set; }
+        public string DisplayName { get; private set; }
         [DisplayName("Job Title")]
         public string JobTitle { get; set; }
         [DisplayName("Employee ID")]

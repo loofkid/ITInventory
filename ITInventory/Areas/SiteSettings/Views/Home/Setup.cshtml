@@ -1,0 +1,56 @@
+﻿@model SiteSettingsModel
+@{
+    ViewData["Title"] = "Site Settings Setup";
+}
+
+<h4>Set your site theme colors and your site logo</h4>
+<div class="col-3">
+    <form asp-controller="Home" asp-action="SaveSettingsSetup" asp-area="SiteSettings" method="post" enctype="multipart/form-data">
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        <div class="form-group">
+            <label asp-for="SiteColorPrimary" class="control-label"></label>
+            <input asp-for="SiteColorPrimary" asp- class="form-control" />
+            <span asp-validation-for="SiteColorPrimary"></span>
+        </div>
+        <div class="form-group">
+            <label asp-for="SiteColorSecondary"></label>
+            <input asp-for="SiteColorSecondary" class="form-control" />
+            <span asp-validation-for="SiteColorSecondary"></span>
+        </div>
+        <div class="form-group">
+            <label asp-for="SiteLogoUpload"></label>
+            <input asp-for="SiteLogoUpload" type="file" accept="image/x-png,image/gif,image/jpeg" class="form-control" />
+            <img id="imgPreview" class="invisible col-12" src="#" />
+            <span asp-validation-for="SiteLogoUpload"></span>
+        </div>
+        <div class="form-group">
+            <button type="submit" class="btn btn-primary">Finish</button>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    <script>
+        function readURL(input) {
+            if (input.files && input.files[0]) {
+                var reader = new FileReader();
+
+                reader.onload = function (e) {
+                    $("#imgPreview").attr("src", e.target.result);
+                    $("#imgPreview").removeClass("invisible");
+                }
+
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+
+        $(function () {
+            $("#SiteColorPrimary").colorpicker();
+            $("#SiteColorSecondary").colorpicker();
+
+            $("#SiteLogoUpload").change(function () {
+                readURL(this);
+            });
+        });
+    </script>
+} 
