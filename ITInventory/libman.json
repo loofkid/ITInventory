@@ -33,6 +33,22 @@
     {
       "library": "@dualinventive/bootstrap-combobox@1.2.3",
       "destination": "wwwroot/lib/dualinventive/bootstrap-combobox/"
+    },
+    {
+      "library": "@types/jquery@3.5.5",
+      "destination": "wwwroot/lib/types/jquery/"
+    },
+    {
+      "library": "@types/sizzle@2.3.2",
+      "destination": "wwwroot/lib/types/sizzle/"
+    },
+    {
+      "library": "Require@1.1.2",
+      "destination": "wwwroot/lib/Require/"
+    },
+    {
+      "library": "@types/requirejs@2.1.31",
+      "destination": "wwwroot/lib/types/requirejs/"
     }
   ]
 }

@@ -1,0 +1,28 @@
+{
+  "compilerOptions": {
+    "noImplicitAny": false,
+    "noEmitOnError": true,
+    "removeComments": false,
+    "sourceMap": true,
+    "target": "es6",
+    "baseUrl": "./wwwroot/lib/",
+    "paths": {
+      "*": [
+        "./wwwroot/lib/*",
+        "./wwwroot/lib/types/*"
+      ]
+    },
+    "typeRoots": [
+      "wwwroot/lib/types"
+    ],
+    "outDir": "wwwroot/js"
+  },
+  "include": [
+    "wwwroot/ts/**/*",
+    "wwrroot/ts/*"
+  ],
+  "exclude": [
+    "wwwroot/lib"
+  ],
+  "compileOnSave": true
+}
