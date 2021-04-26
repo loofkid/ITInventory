@@ -49,6 +49,11 @@
     {
       "library": "@types/requirejs@2.1.31",
       "destination": "wwwroot/lib/types/requirejs/"
+    },
+    {
+      "provider": "cdnjs",
+      "library": "font-awesome@5.15.3",
+      "destination": "wwwroot/lib/font-awesome/"
     }
   ]
 }

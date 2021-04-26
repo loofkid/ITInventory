@@ -6,6 +6,7 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
 
 namespace ITInventory.Models
 {
@@ -44,5 +45,10 @@ namespace ITInventory.Models
         public List<Manufacturer> Manufacturers { get; set; }
         [NotMapped]
         public List<Category> Categories { get; set; }
+
+        public string GetReceiptsAsJson()
+        {
+            return JsonConvert.SerializeObject(Receipts);
+        }
     }
 }

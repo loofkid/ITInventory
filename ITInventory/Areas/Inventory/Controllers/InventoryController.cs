@@ -40,6 +40,18 @@ namespace ITInventory.Areas.Inventory.Controllers
             return View(model);
         }
 
+        [HttpGet]
+        public async Task<IActionResult> EditHardwareItem(string hardwareItemId)
+        {
+            HardwareItem hardwareItem = await _applicationDbContext.HardwareItems
+                .Include(h => h.Receipts)
+                .Include(h => h.CheckOuts)
+                .AsQueryable()
+                .SingleOrDefaultAsync(h => h.InventoryId == hardwareItemId);
+            hardwareItem = (await PrepareComboBoxesAsync(hardwareItem)) as HardwareItem;
+            return View(hardwareItem);
+        }
+        [HttpPost]
         public async Task<IActionResult> EditHardwareItem(HardwareItem hardwareItem)
         {
             hardwareItem = (await PrepareComboBoxesAsync(hardwareItem)) as HardwareItem;

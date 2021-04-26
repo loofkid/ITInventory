@@ -4,24 +4,39 @@
     ViewData["Title"] = "EditHardwareItem";
 }
 
-<h1>EditHardwareItem</h1>
+<h1>Edit Hardware Item</h1>
 
 <h4>HardwareItem</h4>
 <hr />
 <div class="row">
-    <div class="col-md-4">
-        <form asp-action="EditHardwareItem">
+    <div class="col-md-5">
+        <form asp-area="Inventory" asp-controller="Inventory" asp-action="AddHardwareItem" id="hardwareItem-form" enctype="multipart/form-data">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
                 <label asp-for="InventoryId" class="control-label"></label>
                 <input asp-for="InventoryId" class="form-control" />
                 <span asp-validation-for="InventoryId" class="text-danger"></span>
             </div>
+            <div class="form-group">
+                <label asp-for="Category.Name" class="control-label">@Html.DisplayNameFor(m => m.Category)</label>
+                <combobox asp-for="Category.Name" asp-items="@Model.Categories.Select(c => new SelectListItem(c.Name, c.Name))" class="form-control"></combobox>
+                <span asp-validation-for="Category.Name" class="text-danger"></span>
+            </div>
             <hr />
             <div class="form-group">
                 <label asp-for="Name" class="control-label"></label>
                 <input asp-for="Name" class="form-control" />
                 <span asp-validation-for="Name" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Manufacturer.Name" class="control-label">@Html.DisplayNameFor(m => m.Manufacturer)</label>
+                <combobox asp-for="Manufacturer.Name" asp-items="@Model.Manufacturers.Select(m => new SelectListItem(m.Name, m.Name))" class="form-control"></combobox>
+                <span asp-validation-for="Manufacturer.Name" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Model.Name" class="control-label">@Html.DisplayNameFor(m => m.Model)</label>
+                <combobox asp-for="Model.Name" asp-items="@Model.Models.Select(m => new SelectListItem(m.Name, m.Name))" class="form-control"></combobox>
+                <span asp-validation-for="Model.Name" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="SerialNumber" class="control-label"></label>
@@ -56,18 +71,40 @@
                 </label>
             </div>
             <hr />
-            <div class="form-group form-check">
+            <div class="form-group form-check-inline">
                 <label class="form-check-label">
                     <input class="form-check-input" asp-for="CanTakeHome" /> @Html.DisplayNameFor(model => model.CanTakeHome)
                 </label>
             </div>
-            <div class="form-group form-check">
+            <div class="form-group form-check-inline">
                 <label class="form-check-label">
                     <input class="form-check-input" asp-for="RequiresApproval" /> @Html.DisplayNameFor(model => model.RequiresApproval)
                 </label>
             </div>
             <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-primary" />
+                <label asp-for="PhysicalLocation.Name" class="control-label">@Html.DisplayNameFor(m => m.PhysicalLocation)</label>
+                <combobox asp-for="PhysicalLocation.Name" asp-items="@Model.PhysicalLocations.Select(p => new SelectListItem( p.Name, p.Name))" class="form-control"></combobox>
+                <span asp-validation-for="PhysicalLocation.Name" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Notes" class="control-label"></label>
+                <textarea asp-for="Notes" class="form-control"></textarea>
+                <span asp-validation-for="Notes" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="ReceiptFiles" class="control-label"></label>
+                <input asp-for="ReceiptFiles" type="file" multiple class="form-control-file invisible" />
+                <div class="card" id="receipt-upload">
+                    <div class="card-body btn align-middle" id="receipt-body">
+                        <p class="text-center">Drop files here to upload.</p>
+                    </div>
+                    <ul class="list-group list-group-flush receipt-preview-list">
+                    </ul>
+                </div>
+                <span asp-validation-for="ReceiptFiles" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Create" class="btn btn-primary" id="hardwareItem-submitButton" />
             </div>
         </form>
     </div>
@@ -78,5 +115,20 @@
 </div>
 
 @section Scripts {
+    <script>
+        var existing = false;
+        var receipts;
+    </script>
+    @if (@Model.Receipts != null && @Model.Receipts.Any()) {
+    <script>
+        var receiptsJson = '@Html.Raw(Model.GetReceiptsAsJson())';
+        receipts = JSON.parse(receiptsJson);
+        if (receipts.count > 0)
+        {
+            existing = true;
+        }
+    </script>
+    }
+    <script src="~/js/UploadArea.js"></script>
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
 }
